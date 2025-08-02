@@ -1,7 +1,13 @@
 <template>
-  <div>You are viewing {{ domain }}</div>
+  <div>You are viewing {{ hostname }}</div>
+  <router-view></router-view>
 </template>
 
 <script setup>
-const domain = window.location.hostname;
+import { useTitle } from "@vueuse/core";
+import config from "./config";
+
+useTitle(config.appName);
+
+const hostname = window.location.hostname;
 </script>
