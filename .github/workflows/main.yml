@@ -1,0 +1,81 @@
+name: Main Action
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-release:
+    name: Build and Release Dist
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # required to create releases / push tags
+      packages: write
+      issues: none
+      pull-requests: none
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history in case you want tags or version derivation
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Read version from package.json and set tag & release name
+        id: set_tag
+        run: |
+          if [ ! -f package.json ]; then
+            echo "package.json not found" >&2
+            exit 1
+          fi
+          RAW_VERSION=$(node -p "require('./package.json').version")
+          if [ -z "$RAW_VERSION" ]; then
+            echo "Could not read version from package.json" >&2
+            exit 1
+          fi
+          # sanitize to valid tag characters: allow alphanumerics, dot, underscore, dash
+          SAFE_VERSION=$(printf '%s' "$RAW_VERSION" | sed 's/[^A-Za-z0-9._-]/-/g')
+          TAG="v${SAFE_VERSION}"
+          DATETIME=$(date -u +'%Y%m%dT%H%M%S')
+          RELEASE_NAME="${TAG} — ${DATETIME}"
+          echo "Using tag: $TAG"
+          echo "Using release name: $RELEASE_NAME"
+          echo "TAG=${TAG}" >> "$GITHUB_ENV"
+          echo "RELEASE_NAME=${RELEASE_NAME}" >> "$GITHUB_ENV"
+
+
+      - name: Run build
+        run: npm run build
+
+
+      - name: Zip dist folder
+        id: zip_dist
+        run: |
+          SHORT_SHA=${GITHUB_SHA::7}
+          TIMESTAMP=$(date -u +'%Y%m%dT%H%M%SZ')
+          ZIP_NAME="dist-${SHORT_SHA}-${TIMESTAMP}.zip"
+          zip -r "$ZIP_NAME" dist
+          echo "zip_name=$ZIP_NAME" >>"$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload asset
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: ${{ env.RELEASE_NAME }}
+          body: Automated build release
+          draft: false
+          prerelease: false
+          files: ${{ steps.zip_dist.outputs.zip_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
