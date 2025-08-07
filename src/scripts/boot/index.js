@@ -1,17 +1,21 @@
-import { authenticate } from "@/scripts/auth";
+import auth from "@/scripts/auth";
+import domain from "@/scripts/domain";
 
 // Main Application Boot Script
 async function boot() {
   console.info("Booting Application...");
 
   // Perform any necessary initialization here
+  const domainData = await domain.getData();
+
+  console.log(domainData, 10);
 
   // Authenticate
   // e.g., check user session, load user data
 
   try {
     console.info("Authenticating User...");
-    const uid = await authenticate();
+    const uid = await auth.getUID();
     console.info("User Authenticated Successfully");
 
     // Proceed with user-specific operations
