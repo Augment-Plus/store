@@ -1,3 +1,4 @@
+import { app } from "@/scripts/firebase";
 import auth from "@/scripts/auth";
 import domain from "@/scripts/domain";
 
@@ -8,24 +9,14 @@ async function boot() {
   // Perform any necessary initialization here
   const domainData = await domain.getData();
 
-  console.log(domainData, 10);
-
-  // Authenticate
-  // e.g., check user session, load user data
+  console.log(domainData, app);
 
   try {
     console.info("Authenticating User...");
-    const uid = await auth.getUID();
-    console.info("User Authenticated Successfully");
+    const user = await auth.getUserData();
 
     // Proceed with user-specific operations
-    console.info("User ID:", uid);
-
-    // Load user data, settings, etc
-    console.info("Loading User Data...");
-
-    const userData = { id: uid, name: "John Doe" };
-    console.info("User Data:", userData);
+    console.info("User ID:", user.uid);
   } catch (error) {
     console.error("Authentication Failed:", error);
   }

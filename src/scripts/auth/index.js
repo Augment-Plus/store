@@ -1,5 +1,6 @@
-async function authenticate() {
-  console.info("Authenticating User With FireBase...");
+async function getUserData(UID) {
+  const userData = { id: uid, name: "John Doe" };
+  console.info("User Data:", userData);
 }
 
-export default { authenticate };
+export default { getUserData };
