@@ -6,4 +6,7 @@ const router = createRouter({
   routes,
 });
 
+router.afterEach((to, from) => {
+  console.info("New Page");
+});
 export default router;

@@ -26,30 +26,50 @@ export const useStore = defineStore("main", () => {
 
     // Fetch domain info based on the current hostname & user ID
     await setupDomain();
+    let userData = await getUserData();
+    setUserData(userData);
   }
 
   async function setupDomain() {
     try {
-      let domainData = await api.get(
-        `/domain/info?domain=${window.location.hostname}&user=${user.uid}`
-      );
-      Object.assign(domain, domainData.data);
+      let domainData = await api.get(`/data/domain?user=${user.uid}`);
+
+      Object.assign(domain, domainData.data); // Set Domain Configuration Data
     } catch (error) {
-      console.error("Error Fetching Domain Data:", error);
+      console.error("Error Fetching Domain Configuration  Data:", error);
     }
   }
 
-  function setUser(uid) {
+  function setUserData(info) {
+    Object.assign(user, { ...info });
+  }
+
+  function setUserUID(uid) {
     user.uid = uid;
   }
 
-  function clearUser() {}
+  function clearUser() {
+    Object.assign(user, {
+      uid: null,
+    }); // Empty User Info
+  }
+
+  async function getUserData() {
+    if (user.uid) {
+      try {
+        let { data } = await api.get(`/data/user?uid=${user.uid}`);
+        return data;
+      } catch (error) {
+        console.error("Error Fetching User Data:", error);
+      }
+    }
+  }
 
   // === EXPOSE STATE + ACTIONS ===
   return {
     ...actions,
     init,
-    setUser,
+    setUserUID,
     clearUser,
   };
 });
