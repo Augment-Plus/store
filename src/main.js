@@ -1,7 +1,7 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 
-import { auth, onAuthStateChanged } from "@/firebase";
+import { auth, onAuthStateChanged } from "@/packages/firebase";
 import { useStore } from "@/store";
 import router from "./router";
 
