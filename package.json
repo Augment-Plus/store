@@ -6,12 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
-    "update-template": "git remote remove template && git remote add template https://github.com/Augment-Plus/vite-plus && git fetch template && git merge template/main --allow-unrelated-histories"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vueuse/core": "^13.6.0",
     "axios": "^1.11.0",
+    "firebase": "^12.0.0",
     "pinia": "^3.0.3",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"

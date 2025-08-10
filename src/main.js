@@ -1,17 +1,26 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import router from "./router";
-import App from "./App.vue";
 
-import { boot } from "@/scripts/boot";
+import { auth, onAuthStateChanged } from "@/packages/firebase";
+import { useStore } from "@/store";
+import router from "./router";
+
+import App from "./App.vue";
 
 const app = createApp(App);
 app.use(createPinia());
-app.use(router);
 
-// Optionally: wait until router is ready before mounting (good practice)
-router.isReady().then(async () => {
-  // initial boot for the SPA route (in case load event fired earlier or we want it aligned with router readiness)
-  await boot();
+
+onAuthStateChanged(auth, async (user) => {
+  console.info("User Auth State Changed:", user ? user.uid : "No User");
+  
+  const store = useStore();
+  
+  if (user) await store.setUserUID(user.uid);
+  else store.clearUser();
+  
+  await store.init();
+
+  app.use(router);
   app.mount("#app");
 });

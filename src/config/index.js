@@ -1,5 +1,8 @@
 const config = {
-  appName: "My Vue App",
+  app: {
+    id: "vite-plus",
+    name: "Basic App Template",
+  },
 };
 
 export default config;
