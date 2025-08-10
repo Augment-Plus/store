@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update-template": "git remote remove template && git remote add template https://github.com/Augment-Plus/vite-plus && git fetch template && git merge template/main --allow-unrelated-histories"
   },
   "dependencies": {
     "@vueuse/core": "^13.6.0",
