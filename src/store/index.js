@@ -9,8 +9,10 @@ export const useStore = defineStore("main", () => {
   const app = reactive({
     isInitialized: false,
   });
+
   const user = reactive({
     uid: null,
+    role: "client",
   });
 
   // === ACTIONS ===
@@ -42,6 +44,7 @@ export const useStore = defineStore("main", () => {
 
   function setUserData(info) {
     Object.assign(user, { ...info });
+    console.log(user);
   }
 
   function setUserUID(uid) {
@@ -67,6 +70,7 @@ export const useStore = defineStore("main", () => {
 
   // === EXPOSE STATE + ACTIONS ===
   return {
+    user,
     ...actions,
     init,
     setUserUID,
